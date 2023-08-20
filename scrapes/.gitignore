@@ -1,0 +1,10 @@
+airflow-server-key.pem
+venv
+staging_data
+__pycache__
+logs
+.env
+staging_data
+plugins
+config
+secrets.json

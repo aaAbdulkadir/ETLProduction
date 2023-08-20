@@ -1,0 +1,40 @@
+dummy_dag:
+  owner: Abdulkadir
+  description: Scraping current season data 
+  schedule_interval: '0 9 * * *'
+  url: https://www.basketball-reference.com/leagues/NBA_2021_per_game.html
+
+  email_on_failure: True
+  email: a.abdulkadir@hotmail.com
+
+  python_callable_file: dummy_dag/dummy_dag_functions.py
+  tasks:
+    extract:
+      python_callable: extract
+      file_extension: csv
+      retries: 3
+      retry_delay: 1200
+
+    transform:
+      python_callable: transform
+      dependencies:
+      - extract
+
+    load:
+      mode: append
+      dataset_name: dummy_nba_data
+      dependencies:
+      - transform
+      fields:
+      - name: rank
+        type: integer
+      - name: Player
+        type: varchar(55)
+      - name: position
+        type: varchar(5)
+      - name: age
+        type: int
+
+
+
+  
