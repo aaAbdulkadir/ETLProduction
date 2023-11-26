@@ -4,6 +4,7 @@ def load(dataset_name: str, input_filename: str, fields: list, mode: str) -> Non
     import json
     import pandas as pd
     import logging
+    from datetime import datetime
 
     logger = logging.getLogger('load')
 
@@ -46,15 +47,16 @@ def load(dataset_name: str, input_filename: str, fields: list, mode: str) -> Non
         field_name = field['name']
         field_type = field['type']
         create_table_query += f", {field_name} {field_type}"
-    create_table_query += ");"
+    create_table_query += ", scraping_execution_date timestamp);"
 
     cursor.execute(create_table_query)
     connection.commit()
 
     # Insert data into the table
     columns = ', '.join([field['name'] for field in fields])
+    columns += ", scraping_execution_date"
     insert_query = f"INSERT INTO {dataset_name} ({columns}) VALUES %s"
-    records = [tuple(row) for row in df.to_numpy()]
+    records = [(tuple(row) + (datetime.now(),)) for row in df.to_numpy()]
     psycopg2.extras.execute_values(cursor, insert_query, records)
     connection.commit()
 

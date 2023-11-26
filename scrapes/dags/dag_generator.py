@@ -71,7 +71,7 @@ def create_dags_from_yml(yaml_path: str) -> DAG:
     # load
     load_dependencies = config.get('tasks').get('load').get('dependencies')
     mode = config.get('tasks').get('load').get('mode')
-    dataset_name = config.get('tasks').get('load').get('dataset_name')
+    dataset_name = config.get('tasks').get('load').get('dataset_name', dag_id)
     fields = config.get('tasks').get('load').get('fields')
     def load_wrapper(dataset_name, input_filename, fields, mode):
         return load(dataset_name, input_filename, fields, mode)
